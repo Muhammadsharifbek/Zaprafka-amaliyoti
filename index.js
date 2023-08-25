@@ -1,42 +1,56 @@
-const select = document.getElementById("tur");
+const elSelect = document.getElementById("tur");
 const inputSign = document.getElementById("sign");
-const tableTbody = document.getElementById("result");
-console.log(tableTbody);
+const tableTbody = document.querySelector("#result tbody");
+
 let list = [];
 
-let ai80 = 1000;
-let ai92 = 1000;
-let ai98 = 1000;
-let dizel = 1000;
+let fuels = [
+  { base: 1000, price: 6500, type: "ai80", name: "80" },
+  { base: 1000, price: 7500, type: "ai92", name: "92" },
+  { base: 1000, price: 8500, type: "ai98", name: "98" },
+  { base: 1000, price: 5500, type: "dizel", name: "Dizel" },
+];
 
+// funksiyani jadvalga chiqaradi
+const render = () => {
+  tableTbody.innerHTML = "";
+  fuels.forEach((value) => {
+    tableTbody.innerHTML += `
+    <tr>
+    <td> ${value.type}</td>
+    <td> ${value.base}</td>
+    <td> ${value.price.toLocaleString()}</td>
+    </tr>
+    `;
+  });
+};
+
+// inputda kiritilgan malumotlarni basadan ayirib jadvalga ko'rsatadi
 const calc = () => {
-  if (ai80 - inputSign.value) {
-    console.log(ai80);
+  const selectedType = fuels.find((fuel) => fuel.type === elSelect.value);
+  let val = inputSign.value;
+  if (val > selectedType.base) {
+    selectedType.base = 0;
+  } else {
+    selectedType.base -= +inputSign.value;
   }
 };
 
-const render = () => {
-  list.forEach((value, index) => {
-    tableTbody.innerHTML += `
-    <tr>
-    <td> ${value.ai80}</td>
-    <td> ${value.ai92}</td>
-    <td> ${value.ai98}</td>
-    <td> ${value.dizel}</td>
-    </tr>;
+const add = () => {
+  if (!elSelect.value && !inputSign.value.trim()) return;
+
+  calc();
+  render();
+};
+
+const renderSelectedOption = (data) => {
+  data.forEach((item) => {
+    elSelect.innerHTML += `
+
+    <option value="${item.type}"> ${item.name} </option>
     `;
   });
-
-  console.log(value, index);
 };
 
-const add = () => {
-  if (select.value && inputSign.value)
-    list.unshift({
-      select: select.value,
-      sign: +inputSign.value,
-    });
-
-  render();
-  calc();
-};
+renderSelectedOption(fuels);
+render();
